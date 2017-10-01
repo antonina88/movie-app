@@ -1,20 +1,24 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router';
+import { Route, Switch } from 'react-router';
 
 import MoviesList from './MoviesList.jsx';
 import MoviePage from './MoviePage.jsx';
 import LoginPage from './LoginPage.jsx';
 import AddMovie from './AddMovie.jsx';
+import MostLiked from './MostLiked.jsx';
+import MostCommented from './MostCommented.jsx';
 
 class App extends Component {
   render() {
     return (
-      <div>
+      <Switch>
         <Route exact path="/" component={MoviesList} />
-        <Route exact path="/login" component={LoginPage} />
-        <Route exact path="/movie/:id" component={MoviePage} />
-        <Route exact path="/add-movie" component={AddMovie} />
-      </div>
+        <Route path="/login" component={LoginPage} />
+        <Route path="/movie/:id" component={MoviePage} />
+        <Route path="/add-movie" component={AddMovie} />
+        <Route path="/most-liked" component={MostLiked} /> 
+        <Route path="/most-commented" component={MostCommented} /> 
+      </Switch>
     );
   }
 }

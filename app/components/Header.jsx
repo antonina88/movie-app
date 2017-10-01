@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
-export default class Header extends Component {
+import { fetchSignout } from '../actions/user';
+
+class Header extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			menuIsOpen: false
 		};
 		this.toggleMenu = this.toggleMenu.bind(this);
+		this.onSignout = this.onSignout.bind(this);
 	}
 
 	toggleMenu(ev) {
@@ -20,23 +24,28 @@ export default class Header extends Component {
 		}
 	}
 
+	onSignout(ev){
+		ev.preventDefault();
+		this.props.signout();
+	}
+
 	render() {
 		const { menuIsOpen } = this.state;
 		const dropDownMenu = menuIsOpen ? [
 			<ul className="profile">
 				<li><Link to="/profile"> Profile info </Link></li>
-				<li><Link to="/" > Sign out </Link></li>
+				<li><Link to="/" onClick={this.onSignout}> Sign out </Link></li>
 			</ul>
 			] : null;
 		return (
 			<header className="movies" onClick={this.toggleMenu}>
 				<div className="movie-logo">
-					<Link to="/"><img src="app/img/logo.png" width="175" height="96" alt="logotype" title="logotype"/></Link>
+					<Link to="/"><img src="../app/img/logo.png" width="175" height="96" alt="logotype" title="logotype"/></Link>
 					<h1>Moooviez</h1>
 				</div>
 				<div className="user">
 					<p className="userName" onClick={this.toggleMenu}>User</p>
-					<img className="avatar" src="app/img/avatar.png" width="40" height="40"/>
+					<img className="avatar" src="../app/img/avatar.png" width="40" height="40"/>
 					{dropDownMenu}
 				</div>
 			</header>
@@ -44,3 +53,10 @@ export default class Header extends Component {
 	}
 }
 
+const mapDispatchToProps = dispatch => {
+	return {
+		signout: () => dispatch(fetchSignout())
+	};
+};
+
+export default connect(null, mapDispatchToProps)(Header);

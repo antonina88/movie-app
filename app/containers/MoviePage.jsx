@@ -5,62 +5,76 @@ import Header from '../components/Header.jsx';
 import FooterBlock from '../components/FooterBlock.jsx';
 import AddComment from '../components/AddComment.jsx';
 import CommentsList from '../components/CommentsList.jsx';
-import MostLiked from '../components/MostLiked.jsx';
-import AddLike from '../components/AddLike.jsx';
+import MostLiked from './MostLiked.jsx';
+import UpdateLike from '../components/UpdateLike.jsx';
 
 import { fetchMovieById } from '../actions/movies';
-import { fetchAddComment, fetchCommentById } from '../actions/comment';
-import { fetchLike } from '../actions/likes';
+import { fetchAddComment } from '../actions/comment';
+import { fetchLike, fetchRemoveLike } from '../actions/likes';
 
 class MoviePage extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			description: '',
-			changeMovie: ''
+			changeMovie: '',
+			toggleLike: false
 		}
 		this.handleChangeComment = this.handleChangeComment.bind(this);
 		this.addComment = this.addComment.bind(this);
 		this.cleareForm = this.cleareForm.bind(this);
-		this.addLike = this.addLike.bind(this);
+		this.handleChangeLike = this.handleChangeLike.bind(this);
 	}
-	componentWillMount() {
-		this.props.getMovie();
-		this.props.getComments();
+
+	componentDidMount() {
+		this.props.getMovie(); 
 	}
+
 	handleChangeComment (ev) {
 		this.setState({ description: ev.target.value });
 	}
+
 	cleareForm (ev) {
 		this.setState({ description: '' });
 	}
+
 	addComment(ev) {
 		ev.preventDefault();
 		const { description } = this.state;
 		const movieId = this.props.movie._id;
 		this.props.createComment(description, movieId);
 		this.cleareForm();
-		location.reload();
 	}
-	addLike(ev) {
+
+	handleChangeLike(ev) {
 		ev.preventDefault();
-		this.props.addLikeToMovie();
-		this.props.getMovie();
+		const { toggleLike } = this.state;
+		if (!toggleLike) {
+			ev.target.classList.add("active");
+			this.props.addLikes();
+		}
+		if (toggleLike) {
+			ev.target.classList.remove("active");
+			this.props.removeLike();
+		}
+		
+		this.setState({ toggleLike: !toggleLike });
 	}	
 
 	render() {
-		const {	movie, comments } = this.props;
+		const {	movie } = this.props;
+		const comments = movie.comments;
 
 		if (comments) {
 			var commentList = comments.map(comment => {
 				return (
 					<div className="comments-list" key={comment._id}>
-						<h3 className="username">{comment.username}</h3>
 						<p className="date">{comment.date}</p>
 						<p className="textComment">{comment.description}</p>
 					</div>
 				)
 			})
+			var commentsCount = comments.length;
 		}
 
 		return (
@@ -76,13 +90,13 @@ class MoviePage extends Component {
 							{movie.date}
 						</p> 
 						<div className="details">
-							<AddLike 
-								addLike = {this.addLike} 
+							<UpdateLike 
+								handleChangeLike = {this.handleChangeLike} 
 								likes = {movie.likes}
 							/>
 							<p className="comment-count">
 								<svg enableBackground="new 0 0 32 32" height="24px" id="Layer_1" version="1.1" viewBox="0 0 32 32" width="24px" xmlns="http://www.w3.org/2000/svg"><g id="bubble"><path d="M16,7c-5.963,0-11,3.206-11,7c0,0.276,0.224,0.5,0.5,0.5   S6,14.276,6,14c0-3.196,4.673-6,10-6c0.275,0,0.5-0.224,0.5-0.5S16.276,7,16,7z" fill="#333333" /><path d="M16,2C7.163,2,0,7.373,0,14c0,4.127,2.779,7.766,7.008,9.926   C7.008,23.953,7,23.971,7,24c0,1.793-1.339,3.723-1.928,4.736c0.001,0,0.002,0,0.002,0C5.027,28.846,5,28.967,5,29.094   C5,29.594,5.405,30,5.906,30C6,30,6.165,29.975,6.161,29.986c3.125-0.512,6.069-3.383,6.753-4.215C13.913,25.918,14.943,26,16,26   c8.835,0,16-5.373,16-12C32,7.373,24.836,2,16,2z M16,24c-0.917,0-1.858-0.07-2.796-0.207c-0.097-0.016-0.194-0.021-0.29-0.021   c-0.594,0-1.163,0.264-1.546,0.73c-0.428,0.521-1.646,1.684-3.085,2.539c0.39-0.895,0.695-1.898,0.716-2.932   c0.006-0.064,0.009-0.129,0.009-0.184c0-0.752-0.421-1.439-1.09-1.781C4.212,20.252,2,17.207,2,14C2,8.486,8.28,4,16,4   c7.718,0,14,4.486,14,10C30,19.514,23.719,24,16,24z" fill="#333333" /></g></svg>
-								 {movie.comments}
+								{commentsCount}
 							</p>
 						</div>
 					</div>
@@ -98,7 +112,6 @@ class MoviePage extends Component {
 						commentList = {commentList}
 					/>
 				</div>
-				<MostLiked />
 				<FooterBlock />
 			</div>
 		);
@@ -106,8 +119,7 @@ class MoviePage extends Component {
 }
 const mapStateToProps = state => {
 	return {
-		movie: state.getMovieById,
-		comments: state.comment
+		movie: state.getMovieById
 	};
 };
 
@@ -116,8 +128,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 	return {
 		getMovie: () => dispatch(fetchMovieById(movieId)),
 		createComment: (textComment, id) => dispatch(fetchAddComment(textComment, id)),
-		getComments: () => dispatch(fetchCommentById(movieId)),
-		addLikeToMovie: () => dispatch(fetchLike(movieId))
+		addLikes: () => dispatch(fetchLike(movieId)),
+		removeLike: () => dispatch(fetchRemoveLike(movieId)),
 	};
 };
 

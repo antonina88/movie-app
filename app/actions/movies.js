@@ -36,6 +36,7 @@ export const getMovies = () => dispatch => {
 export const fetchMovieById = (id) => {
   return (dispatch) => {
     getMovieById(id).then(data => {
+      console.log('fetchMovieById', data);
       dispatch({ type: GET_MOVIE_BY_ID_SUCCESS, data })
     })
     .catch(e => {

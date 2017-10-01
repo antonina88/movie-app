@@ -18,12 +18,3 @@ export const fetchAddComment = (description, movieId) => {
     });
   };
 };
-
-export const fetchCommentById = (id) => {
-  return (dispatch) => {
-    getCommentByMovieId(id).then(data => {
-      console.log('dataComment', data);
-      dispatch({ type: GET_COMMENT_BY_MOVIE_ID, data })
-    })
-  };
-};

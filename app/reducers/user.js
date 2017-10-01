@@ -1,4 +1,4 @@
-import { ADD_USER, AUTH_SUCCESS, AUTH_FAILURE } from '../constants';
+import { ADD_USER, AUTH_SUCCESS, AUTH_FAILURE, SIGNOUT } from '../constants';
 
 const defaultState = {
   _id: null,
@@ -19,6 +19,9 @@ export const user = (state = defaultState, action) => {
     case AUTH_FAILURE:
       return authFailure(state, action);
 
+    case SIGNOUT:
+      return signoutSuccess(state, action);
+
     default: return state;
     }
 };
@@ -26,7 +29,7 @@ export const user = (state = defaultState, action) => {
 function authSuccess(state, action) {
   return {
         _id: action.data._id,
-        username: action.data.login,
+        username: action.data.username,
         isLoggedIn: true,
         error: null
       }
@@ -38,5 +41,14 @@ function authFailure(state, action) {
         username: '',
         isLoggedIn: false,
         error: action.message
+      }
+}
+
+function signoutSuccess(state, action) {
+  return {
+        _id: null,
+        username: '',
+        isLoggedIn: false,
+        error: action.data
       }
 }

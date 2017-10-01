@@ -18,14 +18,9 @@ class MoviesList extends Component {
 		};
 		this.handleFilterChange = this.handleFilterChange.bind(this);
 		this.searchFilm = this.searchFilm.bind(this);
-		this.getAllFilms = this.getAllFilms.bind(this);
 	}
 	componentDidMount() {
 		this.props.listMovies();	
-	}
-	getAllFilms(ev) {
-		ev.preventDefault();
-		this.setState({ isSearch: false });
 	}
 	handleFilterChange(ev) {
  		this.setState({ filter: ev.target.value.toLowerCase()});
@@ -41,10 +36,6 @@ class MoviesList extends Component {
 		const { movies, searchingMovie, error } = this.props;
 		const { isSearch } = this.state;
 
-		if (error === "Unauthorized") {
-			return  <Redirect to="/login" />
-		}
-
 		const moviesList = movies.map(movie => {
 			 return (
 		        <div className="movie-container" key={movie._id}>
@@ -52,6 +43,10 @@ class MoviesList extends Component {
 		        	<h3><Link to={`/movie/${movie._id}`}>
 			        	{movie.title}
 			        </Link></h3>
+			        <p className="like-hand">
+				        <svg enableBackground="new 0 0 24 24" height="24px" id="Layer_1" version="1.1" viewBox="0 0 24 24" width="24px" xmlns="http://www.w3.org/2000/svg"><path d="M12,4.168C7.943-2.045,0,2.029,0,7.758c0,4.418,6.904,8.223,12,15.187c5.094-6.963,12-10.768,12-15.187  C24,2.029,16.307-2.045,12,4.168"/></svg>
+						{movie.likes}
+					</p>
 		        </div>
 		    );
 		});
@@ -74,7 +69,7 @@ class MoviesList extends Component {
 				<Header />
 				<main>
 					<div className="menu-container">
-						<TopMenu getAllFilms={this.getAllFilms} />
+						<TopMenu />
 						<Search
 							handleFilterChange={this.handleFilterChange}
 							searchFilm={this.searchFilm}
@@ -91,7 +86,6 @@ class MoviesList extends Component {
 const mapStateToProps = state => {
 	return {
 		movies: state.movies,
-		error: state.failure.error,
 		searchingMovie: state.movieByTitle
 	};
 };

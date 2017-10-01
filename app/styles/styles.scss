@@ -378,3 +378,14 @@ button.add-comment {
 .comments-list {
   margin-top: 20px;
 }
+p.like-hand {
+  font-size: 20px;
+  color: #484848;
+  margin-top: 7px;
+}
+.like-hand > svg {
+  fill: #2c8886;
+}
+.like-hand > svg.active{
+  fill: red;
+}

@@ -5,9 +5,15 @@ const comment = new Schema({
     type: String,
     required: true
   },
-  movieId: { type: String, required: true },
-  username: { type: String, required: true },
-  date: { type: Date },
+  movieId: {
+    type: Schema.Types.ObjectId,
+    ref: "Movie"
+  },
+ userId: {
+    type: Schema.Types.ObjectId,
+    ref: "User"
+  },
+  date: { type: Date }
 });
 
 module.exports = comment;

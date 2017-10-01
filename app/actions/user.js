@@ -1,5 +1,5 @@
-import { ADD_USER, AUTH_SUCCESS, AUTH_FAILURE } from '../constants';
-import { createUser, authUser } from '../api';
+import { ADD_USER, AUTH_SUCCESS, AUTH_FAILURE, SIGNOUT } from '../constants';
+import { createUser, authUser, signout } from '../api';
 
 export const fetchNewUser = (login, password) => {
   return (dispatch) => {
@@ -22,3 +22,10 @@ export const fetchAuth = (login, password) => {
   };
 };
 
+export const fetchSignout = (login, password) => {
+  return (dispatch) => {
+    signout(login, password).then(data => {
+      dispatch({ type: SIGNOUT, data });
+    });
+  };
+};

@@ -26,19 +26,10 @@ mongoose.connect("mongodb://localhost/movies_app", {
 });
 mongoose.connection.on("open", () => {
   console.log("Connected!!!");
-
-  Movie.findByIdAndRemove("59c8d72697830512e09cadbd", (err, data) => {
-    if(err) {
-      console.log("ERROR >>>", err);
-      return;
-    }
-
-    console.log(data);
-  });
-  
 });
 
-app.use(cors());
+app.use(cors({credentials: true, origin: 'http://localhost:8080'}));
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -47,18 +38,22 @@ app.use(expressSession({ secret: "mySecretKey" }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.serializeUser((user, done) => {
+passport.serializeUser(function(user, done) {
   done(null, user.login);
 });
 
 passport.deserializeUser((login, done) => {
-  User.findOne({ login }, done);
+  User.findOne({ login }, (err, user) => {
+    //err ? done(err) : done(null,user);
+   done(err, user);
+  });
 });
 
 passport.use(new LocalStrategy({
   usernameField: 'login',
   passwordField: 'password'
-}, (login, password, done) => {
+}, 
+ function(login, password, done) {
   User.findOne({ login }, (err, user) => {
     if(err)
       return done(err);
@@ -78,14 +73,16 @@ app.route("/login")
    
   if(!req.user)
     return res.send("Error");
-
+  
   authUser = req.user;
+  console.log("Request Login supossedly successful.");
+  
   res.send(req.user);
 });
 
 app.get("/*", (req, res, next) => {
   const { url, user } = req;
-
+  
   if(!authUser && url !== "/login" && url !== "/users")
     return res.status(401).send({ error: "Unauthorized" });
 
@@ -95,6 +92,102 @@ app.get("/*", (req, res, next) => {
   next();
 });
 
+//-------------------------------------
+app.get('/movies', (request, response) => {
+
+  const MoviesReq = new Promise((resolve, reject) => {
+    Movie.find({}, (error, data) => {
+      if(error) return reject(error);
+
+      const movies = data.map(mapLikes);
+      
+      Promise.all(movies)
+      .then(movieRequest => {
+        response.send(movieRequest);
+      })
+      .catch(err => {
+        response.status(404).end();
+      });
+
+    });
+  });
+
+  const mapLikes = movie => new Promise((resolve, reject) => {
+      const movieId = movie._id;
+      Like.find({ movieId }, (err, dataLikes) => {
+        const likesCount = dataLikes.length;
+
+        resolve(Object.assign({}, movie._doc, {likes: likesCount}));
+      })
+
+    })
+});
+
+app.post('/movies', (req, res) => {
+  const title = req.body.title ? req.body.title.toLowerCase().trim() : null;
+  const description = req.body.description ? req.body.description.trim() : null;
+  const url = req.body.url ? req.body.url.trim() : null;
+    
+  Movie.create({
+    title,
+    description,
+    url,
+    date: new Date()
+  }, (err, data) => {
+      if(err)
+        return res.status(500).send({
+          error: "Can not save Movie"
+        });
+
+      res.status(200).send(data);
+    });
+});
+
+app.get('/movies/:id', (req, res) => {
+  const  movieId = req.params.id;
+  
+  const movieReq = new Promise((resolve, reject) => {
+    Movie.findById(movieId, (err, movieData) => {
+      if(err) return reject(err);
+
+      const likesReq = new Promise((resolve, reject) => {
+          Like.find({movieId}, (err, dataLikes) => {
+            if(err) return reject(err);
+            resolve(dataLikes);
+          })
+      })
+
+      const commentsReq = new Promise((resolve, reject) => {
+          Comment.find({movieId}, (err, dataComments) => {
+            if(err) return reject(err);
+            resolve(dataComments);
+          })
+      })
+
+      Promise.all([likesReq, commentsReq])
+        .then(([likesData, commentsData]) => {
+          const countLikes = likesData.length;
+          res.send(Object.assign({}, movieData._doc, {comments: commentsData}, {likes: countLikes}))
+      })
+        
+    });
+  });
+
+})
+
+app.post('/filter-movie', (req, res) => {
+ const { title } = req.body;
+  Movie.findOne({ title }, (err, data) => {
+    if (err) {
+      return res.status(500).send({
+          error: "Can not get Movie at this title"
+        });
+    }
+    if (data) return res.send(data);
+  });
+})
+
+//-------------------------------------
 app.get('/users', (req, res) => {
   User.find({}, (err, data) => {
       if(err)
@@ -128,28 +221,32 @@ app.post('/users', (req, res) => {
     });
 });
 
+app.get("/signout", (req, res) => {
+  req.logout();
+});
+
 app.get('/comments', (req, res) => {
   Comment.find({}, (err, data) => {
        if(err)
         return res.status(500).send({
-          error: "Can not get users"
+          error: "Can not get comments"
         });
       res.send(data);
     });
 });
 
-app.post('/comments', (req, res) => {
+app.post('/add-comment', (req, res) => {
   const description = req.body.description ? req.body.description.trim() : null;
   const movieId = req.body.movieId;
 
   if(!description) {
     return res.status(500).send("Please send valid information");
   }
-  
+
   Comment.create({ 
     description, 
     movieId,
-    username: authUser.login,
+    userId: authUser._id,
     date: new Date()
   }, (err, data) => {
       if(err)
@@ -161,80 +258,21 @@ app.post('/comments', (req, res) => {
     });
 });
 
-app.get('/movies', (req, res) => {
-	Movie.find({}, (err, data) => {
+app.get('/likes', (req, res) => {
+  Like.find({}, (err, data) => {
        if(err)
         return res.status(500).send({
-          error: "Can not get movies"
+          error: "Can not get Likes"
         });
-      res.status(200).send(data);
+      res.send(data);
     });
 });
-
-app.post('/movies', (req, res) => {
-  const title = req.body.title ? req.body.title.toLowerCase().trim() : null;
-  const description = req.body.description ? req.body.description.trim() : null;
-  const url = req.body.url ? req.body.url.trim() : null;
-    
-  Movie.create({
-    title,
-    description,
-    url,
-    date: new Date()
-  }, (err, data) => {
-      if(err)
-        return res.status(500).send({
-          error: "Can not save Movie"
-        });
-
-      res.status(200).send(data);
-    });
-});
-
-app.get('/movies/:id', (req, res) => {
-  Movie.findById(req.params.id).then(data => {
-    res.send(data);
-  })
-})
-
-app.post('/filter-movie', (req, res) => {
- const { title } = req.body;
-  Movie.findOne({ title }, (err, data) => {
-    if (err) {
-      return res.status(500).send({
-          error: "Can not get Movie at this title"
-        });
-    }
-    if (data) return res.send(data);
-  });
-})
-
-app.post('/select-comments', (req, res) => {
-  const movieId = req.body.id;
- 
-  Comment.find({ movieId }, (err, data) => {
-    if (err) {
-      return res.status(500).send({
-          error: "Can not get Movie at this title"
-      });
-    }
-    if (data) {
-      Movie.findByIdAndUpdate(movieId, { $inc: { comments: 1 }},  function (err, raw) {
-        if (err) 
-          return handleError(err);
-      });
-      return res.send(data);
-    } 
-  });
-})
 
 app.post('/add-like', (req, res) => {
   const movieId = req.body.id;
-  
   Like.create({ 
       movieId, 
-      count: 1,
-      username: authUser.login,
+      userId: authUser._id,
   }, (err, data) => {
       if(err)
         return res.status(500).send({
@@ -243,14 +281,22 @@ app.post('/add-like', (req, res) => {
      
       res.status(200).send(data);
     });
-     
-    Movie.findByIdAndUpdate(movieId, { $inc: { likes: 1 }},  function (err, raw) {
-      if (err) 
-        return handleError(err);
-    });
   }
 )
 
+app.post('/remove-like', (req, res) => {
+  const movieId = req.body.id;
+  const userId = authUser._id;
+
+  Like.remove({ movieId, userId }, function(err, data) {
+    if (err) 
+      return res.status(500).send({
+          error: "Can not remove Like"
+      });
+  });
+})
+
+
 app.listen(8000, () => {
-	console.log('Server is up and running on port 8000');
+  console.log('Server is up and running on port 8000');
 });

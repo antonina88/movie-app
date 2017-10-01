@@ -13,16 +13,7 @@ const movie = new Schema({
     type: String,
     required: true
   },
-  date : { type: Date },
-
-  likes : { 
-    type: Number,  
-    default: 0 
-  },
-  comments : { 
-    type: Number, 
-    default: 0 
-  }
+  date : { type: Date }
 });
 
 module.exports = movie;

@@ -9,9 +9,11 @@ export const FIND_MOVIE = 'FIND_MOVIE';
 export const ADD_USER = 'ADD_USER';
 export const AUTH_SUCCESS = 'AUTH_SUCCESS';
 export const AUTH_FAILURE = 'AUTH_FAILURE';
+export const SIGNOUT = 'SIGNOUT';
 
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
 export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
 export const GET_COMMENT_BY_MOVIE_ID= 'GET_COMMENT_BY_MOVIE_ID';
 
 export const ADD_LIKE= 'ADD_LIKE';
+export const REMOVE_LIKE= 'REMOVE_LIKE';
