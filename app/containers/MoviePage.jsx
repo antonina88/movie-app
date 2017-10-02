@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import Header from '../components/Header.jsx';
+import Header from './Header.jsx';
 import FooterBlock from '../components/FooterBlock.jsx';
 import AddComment from '../components/AddComment.jsx';
 import CommentsList from '../components/CommentsList.jsx';

@@ -5,7 +5,7 @@ import { Redirect } from 'react-router';
 
 import Authorization from '../components/Authorization.jsx';
 import Registration from '../components/Registration.jsx';
-import { fetchNewUser, fetchAuth } from '../actions/user';
+import { fetchNewUser, fetchAuth, fetchAuthorizedUser } from '../actions/user';
 
 class LoginPage extends Component {
 	constructor(props) {
@@ -13,7 +13,8 @@ class LoginPage extends Component {
 		this.state = {
 			login: '',
        		password: '',
-       		formtype: 'authorization'
+       		formtype: 'authorization',
+       		isLogined: false
 		};
 		this.handleLoginChange = this.handleLoginChange.bind(this);
 		this.handlePasswordChange = this.handlePasswordChange.bind(this);
@@ -21,6 +22,14 @@ class LoginPage extends Component {
 		this.handleSignUp = this.handleSignUp.bind(this);
 		this.selectAuthorizationForm = this.selectAuthorizationForm.bind(this);
 		this.selectRegistrationForm = this.selectRegistrationForm.bind(this);
+	}
+	componentDidMount() {
+		this.props.getUser();
+	}
+	componentWillReceiveProps(nextProps) {
+		if (nextProps.username) {
+			 this.setState({ isLogined: true });
+		}
 	}
 
 	handleLoginChange(ev) {
@@ -54,7 +63,11 @@ class LoginPage extends Component {
    	}
 
 	render() {
-		const { formtype } = this.state;
+		const { formtype, isLogined } = this.state; 
+		const { username } = this.props;
+
+		const shouldRedirect = isLogined ? <Redirect to="/" /> : false;
+
 		let form;
 
 		switch (formtype) {
@@ -80,9 +93,10 @@ class LoginPage extends Component {
 					form = null;
 			}
 		}
+
 		return (
 			<div className="app-container">
-				<div className="border-left"></div>
+				<div className="border-left"></div>{shouldRedirect}
 					<div className="wrapper">
 						<header>
 							<h1>Welcome to the moooviez</h1>
@@ -100,12 +114,17 @@ class LoginPage extends Component {
 		);
 	}
 }
-
+const mapStateToProps = state => {
+	return {
+		username: state.user.username
+	};
+};
 const mapDispatchToProps = dispatch => {
   return {
     addUser: (login, password) => dispatch(fetchNewUser(login, password)),
-    authenticate: (login, password) => dispatch(fetchAuth(login, password))
+    authenticate: (login, password) => dispatch(fetchAuth(login, password)),
+    getUser: () => dispatch(fetchAuthorizedUser())
   };
 };
 
-export default connect(null, mapDispatchToProps)(LoginPage);
+export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);

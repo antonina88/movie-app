@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router'
 import { connect } from 'react-redux';
 
-import { fetchSignout } from '../actions/user';
+import TopMenu from '../components/TopMenu.jsx';
+import { fetchSignout, fetchAuthorizedUser } from '../actions/user';
 
 class Header extends Component {
 	constructor(props) {
@@ -12,6 +14,9 @@ class Header extends Component {
 		};
 		this.toggleMenu = this.toggleMenu.bind(this);
 		this.onSignout = this.onSignout.bind(this);
+	}
+	componentDidMount() {
+		this.props.getUser();
 	}
 
 	toggleMenu(ev) {
@@ -30,7 +35,9 @@ class Header extends Component {
 	}
 
 	render() {
-		const { menuIsOpen } = this.state;
+		const { menuIsOpen, isFetching, isRedirect } = this.state;
+		const { username } = this.props;
+
 		const dropDownMenu = menuIsOpen ? [
 			<ul className="profile">
 				<li><Link to="/profile"> Profile info </Link></li>
@@ -39,12 +46,13 @@ class Header extends Component {
 			] : null;
 		return (
 			<header className="movies" onClick={this.toggleMenu}>
+				
 				<div className="movie-logo">
 					<Link to="/"><img src="../app/img/logo.png" width="175" height="96" alt="logotype" title="logotype"/></Link>
 					<h1>Moooviez</h1>
 				</div>
 				<div className="user">
-					<p className="userName" onClick={this.toggleMenu}>User</p>
+					<p className="userName" onClick={this.toggleMenu}>{username}</p>
 					<img className="avatar" src="../app/img/avatar.png" width="40" height="40"/>
 					{dropDownMenu}
 				</div>
@@ -53,10 +61,16 @@ class Header extends Component {
 	}
 }
 
+const mapStateToProps = state => {
+	return {
+		username: state.user.username
+	};
+};
 const mapDispatchToProps = dispatch => {
 	return {
-		signout: () => dispatch(fetchSignout())
+		signout: () => dispatch(fetchSignout()),
+		getUser: () => dispatch(fetchAuthorizedUser())
 	};
 };
 
-export default connect(null, mapDispatchToProps)(Header);
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

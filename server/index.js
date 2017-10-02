@@ -19,8 +19,6 @@ const User = mongoose.model("User", userSchema);
 const Comment = mongoose.model("Comment", commentSchema);
 const Like = mongoose.model("Like", likeSchema);
 
-let authUser = null;
-
 mongoose.connect("mongodb://localhost/movies_app", {
   useMongoClient: true
 });
@@ -44,7 +42,6 @@ passport.serializeUser(function(user, done) {
 
 passport.deserializeUser((login, done) => {
   User.findOne({ login }, (err, user) => {
-    //err ? done(err) : done(null,user);
    done(err, user);
   });
 });
@@ -68,13 +65,13 @@ passport.use(new LocalStrategy({
   })
 }));
 
+
 app.route("/login")
   .post(passport.authenticate('local'), (req, res) => {
    
   if(!req.user)
     return res.send("Error");
   
-  authUser = req.user;
   console.log("Request Login supossedly successful.");
   
   res.send(req.user);
@@ -82,13 +79,12 @@ app.route("/login")
 
 app.get("/*", (req, res, next) => {
   const { url, user } = req;
-  
-  if(!authUser && url !== "/login" && url !== "/users")
+  if(!user && url !== "/login" && url !== "/users")
     return res.status(401).send({ error: "Unauthorized" });
 
-  if(authUser && (url === "/login" || url === "/users"))
+  if(user && (url === "/login" || url === "/users"))
     return res.status(401).send({ error: "Unauthorized" });
-  
+
   next();
 });
 
@@ -238,6 +234,10 @@ app.post('/users', (req, res) => {
 
 app.get("/signout", (req, res) => {
   req.logout();
+
+  const username = req.user && req.user.login;
+
+  res.send({username});
 });
 
 app.get('/comments', (req, res) => {
@@ -261,7 +261,7 @@ app.post('/add-comment', (req, res) => {
   Comment.create({ 
     description, 
     movieId,
-    userId: authUser._id,
+    userId: req.user._id,
     date: new Date()
   }, (err, data) => {
       if(err)
@@ -283,11 +283,16 @@ app.get('/likes', (req, res) => {
     });
 });
 
+app.get('/user', (req, res) => {
+  const username = req.user.login;
+  res.send({username});
+});
+
 app.post('/add-like', (req, res) => {
   const movieId = req.body.id;
   Like.create({ 
       movieId, 
-      userId: authUser._id,
+      userId: req.user._id,
   }, (err, data) => {
       if(err)
         return res.status(500).send({
@@ -301,7 +306,7 @@ app.post('/add-like', (req, res) => {
 
 app.post('/remove-like', (req, res) => {
   const movieId = req.body.id;
-  const userId = authUser._id;
+  const userId = req.user._id;
 
   Like.remove({ movieId, userId }, function(err, data) {
     if (err) 

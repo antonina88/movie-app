@@ -2,13 +2,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 
-import Header from '../components/Header.jsx';
+import Header from './Header.jsx';
 import FooterBlock from '../components/FooterBlock.jsx';
-import { fetchAddMovie } from '../actions/movies';
-
+import TopMenu from '../components/TopMenu.jsx';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
+import { fetchAddMovie } from '../actions/movies';
 
 class AddMovie extends Component {
 	constructor(props) {
@@ -81,8 +80,11 @@ class AddMovie extends Component {
 	    ]: null
 
 		return (
-			<div>
+			<div className="wrapper">
 				<Header />
+				<div className="menu-container">
+					<TopMenu />
+				</div>
 				<div className="add-movie">
 					<div className="cover-preview">&nbsp;</div>
 					{alert}

@@ -42,6 +42,7 @@ div.user {
 }
 p.userName{
   text-align: center;
+  text-transform: capitalize;
 }
 p.userName:hover {
   cursor: pointer;
@@ -272,6 +273,7 @@ div.movie-page {
    display: flex;
    background: #8ac1e2;
    justify-content: space-between;
+   height: 40px;
 }
  ul.main-menu {
   list-style: none;

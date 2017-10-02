@@ -4,7 +4,8 @@ export function listMovies() {
     return fetch(`${api}/movies`, {
         headers: {
           "content-type": "application/json"
-        }
+        },
+        credentials: "include"
       }).then(res => {
         if (res.status === 200) {
             return res.json();
@@ -30,7 +31,9 @@ export function createMovie(title, description, url) {
 }
 
 export function getMovieById(id) {
-    return fetch(`${api}/movies/${id}`).then(res => {
+    return fetch(`${api}/movies/${id}`, {
+        credentials: "include"
+    }).then(res => {
         if (res.status === 200) {
             return res.json();
         }
@@ -44,6 +47,7 @@ export function getMovieByTitle(title) {
     	headers: {
     		'content-type': 'application/json'
     	},
+        credentials: "include",
     	body: JSON.stringify({ title})
     }).then(res => {
         if (res.status === 200) {
@@ -59,6 +63,7 @@ export function createUser(login, password) {
         headers: {
             'content-type': 'application/json'
         },
+        credentials: "include",
         body: JSON.stringify({ login, password })
     }).then(res => {
         if (res.status === 200) {
@@ -75,6 +80,7 @@ export function authUser(login, password) {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         },
+        credentials: "include",
         body: JSON.stringify({ login, password })
     }).then(res => {
         if (res.status === 200) {
@@ -91,6 +97,7 @@ export function createComment(description, movieId) {
             'content-type': 'application/json',
             'Accept': 'application/json'
         },
+        credentials: "include",
         body: JSON.stringify({ description, movieId })
     }).then(res => {
         if (res.status === 200) {
@@ -106,6 +113,7 @@ export function addLike(id) {
         headers: {
             'content-type': 'application/json'
         },
+        credentials: "include",
         body: JSON.stringify({ id })
     }).then(res => {
         if (res.status === 200) {
@@ -121,6 +129,7 @@ export function removeLike(id) {
         headers: {
             'content-type': 'application/json'
         },
+        credentials: "include",
         body: JSON.stringify({ id })
     }).then(res => {
         if (res.status === 200) {
@@ -130,8 +139,21 @@ export function removeLike(id) {
     });
 }
 
+export function getAuthorizedUser() {
+    return fetch(`${api}/user`, {
+        credentials: "include"
+      }).then(res => {
+        if (res.status === 200) {
+            return res.json();
+        }
+        throw new Error(res.statusText);
+    });
+}
+
 export function signout() {
-    return fetch(`${api}/signout`).then(res => {
+    return fetch(`${api}/signout`, {
+        credentials: "include"
+    }).then(res => {
          if (res.status === 200) {
             return res.json();
         }

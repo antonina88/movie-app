@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 import TopMenu from '../components/TopMenu.jsx';
 import Search from '../components/Search.jsx';
-import Header from '../components/Header.jsx';
+import Header from './Header.jsx';
 import FooterBlock from '../components/FooterBlock.jsx';
 import { getMovies, searchMovieByTitle } from '../actions/movies';
 
@@ -73,7 +73,9 @@ class MoviesList extends Component {
 						</h3>
 				</div>
 			</div>
-		] : <div className="list-movies">{moviesList}</div>;
+		] : <div className="list-movies">
+				{moviesList}
+			</div>;
 
 		return (
 			<div className="wrapper">
@@ -86,6 +88,7 @@ class MoviesList extends Component {
 							searchFilm={this.searchFilm}
 						/>
 					</div>
+
 					{moviesBlock}
 				</main>
 				<FooterBlock />

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { getMovies } from '../actions/movies';
 import { Link } from 'react-router-dom';
 import TopMenu from '../components/TopMenu.jsx';
-import Header from '../components/Header.jsx';
+import Header from './Header.jsx';
 import FooterBlock from '../components/FooterBlock.jsx';
 
 class MostCommented extends Component {

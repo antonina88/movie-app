@@ -10,8 +10,6 @@ export default function Authorization({ handleLoginChange, handlePasswordChange,
 			<label htmlFor="passwordField">Password</label>
 			<input type="password" id="passwordField" onChange={handlePasswordChange} /> <br/>
 
-			<input type="checkbox" id="rememberPerson" />
-			<label htmlFor="rememberPerson">Remember&nbsp;me </label> <br/>
 			<div className="btn-container">
 				<button className="SignIn active" onClick={handleLogIn}> Sign in </button>
 				<a onClick={selectRegistrationForm}>Sign up</a>

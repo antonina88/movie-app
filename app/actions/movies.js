@@ -25,7 +25,6 @@ export const fetchAddMovie = (title, description, url) => {
 export const getMovies = () => dispatch => {
     listMovies()
     .then(data => {
-      console.log('data-movie', data);
       dispatch({ type: GET_MOVIES_SUCCESS, data })
     })
     .catch(e => {
@@ -37,7 +36,6 @@ export const getMovies = () => dispatch => {
 export const fetchMovieById = (id) => {
   return (dispatch) => {
     getMovieById(id).then(data => {
-      console.log('fetchMovieById', data);
       dispatch({ type: GET_MOVIE_BY_ID_SUCCESS, data })
     })
     .catch(e => {
