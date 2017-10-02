@@ -25,6 +25,7 @@ export const fetchAddMovie = (title, description, url) => {
 export const getMovies = () => dispatch => {
     listMovies()
     .then(data => {
+      console.log('data-movie', data);
       dispatch({ type: GET_MOVIES_SUCCESS, data })
     })
     .catch(e => {

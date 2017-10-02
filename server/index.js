@@ -94,34 +94,49 @@ app.get("/*", (req, res, next) => {
 
 //-------------------------------------
 app.get('/movies', (request, response) => {
-
   const MoviesReq = new Promise((resolve, reject) => {
-    Movie.find({}, (error, data) => {
-      if(error) return reject(error);
+      Movie.find({}, (error, data) => {
+        if(error) return reject(error);
 
-      const movies = data.map(mapLikes);
-      
-      Promise.all(movies)
-      .then(movieRequest => {
-        response.send(movieRequest);
-      })
-      .catch(err => {
-        response.status(404).end();
+        const movies = data.map(mapLikesAndComments);
+        
+        Promise.all(movies)
+          .then(movieRequest => {
+            response.send(movieRequest);
+          })
+          .catch(err => {
+            response.status(404).end();
+        });
+
       });
-
     });
-  });
 
-  const mapLikes = movie => new Promise((resolve, reject) => {
-      const movieId = movie._id;
-      Like.find({ movieId }, (err, dataLikes) => {
-        const likesCount = dataLikes.length;
+    const mapLikesAndComments = movie => new Promise((resolve, reject) =>{
+        const movieId = movie._id;
 
-        resolve(Object.assign({}, movie._doc, {likes: likesCount}));
+        const likesReq = new Promise((resolve, reject) => {
+            Like.find({ movieId }, (err, dataLikes) => {
+                if(err) return reject(err);
+                resolve(dataLikes);
+            })
+        });
+
+        const commentsReq = new Promise((resolve, reject) => {
+            Comment.find({ movieId }, (err, dataComments) => {
+                if(err) return reject(err);
+                resolve(dataComments);
+            })
+        });
+
+        return Promise.all([likesReq, commentsReq])
+            .then(([likesData, commentsData]) => {
+              const countLikes = likesData.length;
+              const countComments = commentsData.length;
+              resolve(Object.assign({}, movie._doc, {comments: countComments}, {likes: countLikes}))
+          })
       })
-
-    })
 });
+
 
 app.post('/movies', (req, res) => {
   const title = req.body.title ? req.body.title.toLowerCase().trim() : null;

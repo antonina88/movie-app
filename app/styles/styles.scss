@@ -237,11 +237,19 @@ div.list-movies {
   justify-content: space-between; 
 }
 .movie-container{
-  width: 200px;
+  width: 220px;
   margin: 10px 7px;
   display: flex;
   flex-direction: column;
-  padding: 0 5px;
+  justify-content: space-around;
+  padding: 0 5px;border-radius: 0 0 10px 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5); 
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5); 
+  padding-bottom: 10px;
+  h3{
+    text-align: center;
+  }
   h3 > a {
     text-decoration: none;
     color: #4b4247;
@@ -332,18 +340,25 @@ footer {
 
 .details {
   width: 150px;
+  margin: 0 auto;
   p {
     display: inline-block;
+    font-size: 20px;
+    color: #484848;
   }
   p:first-child {
-     margin: 20px 35px 0 0;
+    margin: 10px 30px 0 20px;
   }
   svg {
     margin-right: 5px;
+    position: relative;
+    top: 4px;
     &:hover {
      cursor: pointer;
     }
   }
+
+
 }
 
 button.add-comment {
@@ -378,14 +393,13 @@ button.add-comment {
 .comments-list {
   margin-top: 20px;
 }
-p.like-hand {
-  font-size: 20px;
-  color: #484848;
-  margin-top: 7px;
-}
-.like-hand > svg {
+
+.like-count > svg {
+  //fill: #59c5d5;
   fill: #2c8886;
+ // fill: #484848;
 }
-.like-hand > svg.active{
+.like-count > svg.active{
   fill: red;
 }
+
