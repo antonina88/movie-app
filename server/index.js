@@ -73,8 +73,55 @@ app.route("/login")
     return res.send("Error");
   
   console.log("Request Login supossedly successful.");
-  
-  res.send(req.user);
+  const username = req.user.login;
+  res.send({username});
+});
+
+//-------------------------------------
+app.get('/users', (req, res) => {
+  User.find({}, (err, data) => {
+      if(err)
+        return res.status(500).send({
+           error: "Can not get users"
+        });
+      res.send(data);
+    });
+});
+
+app.post('/users', (req, res) => {
+  const login = req.body.login ? req.body.login.trim() : null;
+  const password = req.body.password ? req.body.password.trim() : null;
+
+  if(!login || !password) {
+    return res.status(500).send("Please send valid information");
+  }
+ 
+  User.findOne({ login }, (err, user) => {
+    if(err)
+      return done(err);
+
+    if(!user)
+
+      User.create({ login, password, group: 'user'}, (err, user) => {
+
+      if(err)
+        return res.status(500).send({
+          error: "Can not save User"
+        });
+     
+      req.login(user, err => {
+        if(err) return res.send(err);
+
+        const username = req.user.login;
+        return res.send({username});
+      });
+
+    });
+
+    if(user)
+      return res.status(500).send("user with such login already exists");
+  })
+
 });
 
 app.get("/*", (req, res, next) => {
@@ -197,40 +244,6 @@ app.post('/filter-movie', (req, res) => {
     if (data) return res.send(data);
   });
 })
-
-//-------------------------------------
-app.get('/users', (req, res) => {
-  User.find({}, (err, data) => {
-      if(err)
-        return res.status(500).send({
-           error: "Can not get users"
-        });
-      res.send(data);
-    });
-});
-
-app.post('/users', (req, res) => {
-  const login = req.body.login ? req.body.login.trim() : null;
-  const password = req.body.password ? req.body.password.trim() : null;
-
-  if(!login || !password) {
-    return res.status(500).send("Please send valid information");
-  }
- 
-  User.create({ login, password, group: 'user'}, (err, user) => {
-      if(err)
-        return res.status(500).send({
-          error: "Can not save User"
-        });
-     
-      req.login(user, err => {
-        if(err) return res.send(err);
-
-        res.send(user);
-      });
-
-    });
-});
 
 app.get("/signout", (req, res) => {
   req.logout();
