@@ -10,13 +10,19 @@ class Header extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			menuIsOpen: false
+			menuIsOpen: false,
+			isRedirect: false
 		};
 		this.toggleMenu = this.toggleMenu.bind(this);
 		this.onSignout = this.onSignout.bind(this);
 	}
 	componentDidMount() {
 		this.props.getUser();
+	}
+	componentWillReceiveProps(nextProps) {
+		if (!nextProps.username) {
+			 this.setState({ isRedirect: true });
+		}
 	}
 
 	toggleMenu(ev) {
@@ -35,8 +41,9 @@ class Header extends Component {
 	}
 
 	render() {
-		const { menuIsOpen, isFetching, isRedirect } = this.state;
+		const { menuIsOpen, isRedirect } = this.state;
 		const { username } = this.props;
+		const shouldRedirect = isRedirect ? <Redirect to="/login" /> : false;
 
 		const dropDownMenu = menuIsOpen ? [
 			<ul className="profile">
@@ -46,7 +53,7 @@ class Header extends Component {
 			] : null;
 		return (
 			<header className="movies" onClick={this.toggleMenu}>
-				
+				{shouldRedirect}
 				<div className="movie-logo">
 					<Link to="/"><img src="../app/img/logo.png" width="175" height="96" alt="logotype" title="logotype"/></Link>
 					<h1>Moooviez</h1>

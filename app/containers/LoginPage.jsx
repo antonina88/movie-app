@@ -25,7 +25,6 @@ class LoginPage extends Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
-		console.log('nextProps.username', nextProps.username);
 		if (nextProps.username) {
 			 this.setState({ isLogined: true });
 		}
@@ -63,7 +62,6 @@ class LoginPage extends Component {
 
 	render() {
 		const { formtype, isLogined } = this.state; 
-		const { username } = this.props;
 
 		const shouldRedirect = isLogined ? <Redirect to="/" /> : false;
 
@@ -115,7 +113,6 @@ class LoginPage extends Component {
 	}
 }
 const mapStateToProps = state => {
-	console.log('state', state.user);
 	return {
 		username: state.user.username
 	};

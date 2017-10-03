@@ -32,8 +32,7 @@ header.movies {
   justify-content: space-between;
   align-items: baseline;
   padding-bottom: 10px;
-  background: #dbf699 url('../img/header_bg2.png') no-repeat top -20px left 400px;
-  //#36abc2; 
+  background: #dbf699 url('../img/header_bg2.png') no-repeat top -20px left 400px; 
 }
 div.user {
   position: relative; 
@@ -312,7 +311,6 @@ div.movie-page {
   border: none;
   margin-right: 10px;
   background: #dbf699;
-  //background: #fde5ad;
   &:focus{
     outline: none;
   }
@@ -323,8 +321,6 @@ div.movie-page {
 }
 
 footer {
-  //background: #00bcd4;
-  //background: #8fc1e2;
   background: #6db4ef;
   height: 80px;
   margin-top: 100px;
@@ -342,7 +338,6 @@ footer {
 
 .details {
   width: 150px;
-  margin: 0 auto;
   p {
     display: inline-block;
     font-size: 20px;
@@ -359,8 +354,9 @@ footer {
      cursor: pointer;
     }
   }
-
-
+}
+.movie-container .details {
+    margin: 0 auto;
 }
 
 button.add-comment {
@@ -397,11 +393,8 @@ button.add-comment {
 }
 
 .like-count > svg {
-  //fill: #59c5d5;
   fill: #2c8886;
- // fill: #484848;
 }
 .like-count > svg.active{
   fill: red;
 }
-
