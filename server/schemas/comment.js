@@ -9,8 +9,8 @@ const comment = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Movie"
   },
- userId: {
-    type: Schema.Types.ObjectId,
+ username: {
+    type: String,
     ref: "User"
   },
   date: { type: Date }

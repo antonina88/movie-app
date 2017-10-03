@@ -24,6 +24,16 @@ mongoose.connect("mongodb://localhost/movies_app", {
 });
 mongoose.connection.on("open", () => {
   console.log("Connected!!!");
+
+    Comment.findByIdAndRemove("59d1e953397dfa10c48792ba", (err, data) => {
+     if(err) {
+      console.log("ERROR >>>", err);
+       return;
+     }
+
+     console.log(data);
+   });
+
 });
 
 app.use(cors({credentials: true, origin: 'http://localhost:8080'}));
@@ -185,7 +195,8 @@ app.post('/movies', (req, res) => {
   const title = req.body.title ? req.body.title.toLowerCase().trim() : null;
   const description = req.body.description ? req.body.description.trim() : null;
   const url = req.body.url ? req.body.url.trim() : null;
-    
+
+
   Movie.create({
     title,
     description,
@@ -274,7 +285,7 @@ app.post('/add-comment', (req, res) => {
   Comment.create({ 
     description, 
     movieId,
-    userId: req.user._id,
+    username: req.user.login,
     date: new Date()
   }, (err, data) => {
       if(err)
