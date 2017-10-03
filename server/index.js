@@ -24,16 +24,6 @@ mongoose.connect("mongodb://localhost/movies_app", {
 });
 mongoose.connection.on("open", () => {
   console.log("Connected!!!");
-
-    Comment.findByIdAndRemove("59d1e953397dfa10c48792ba", (err, data) => {
-     if(err) {
-      console.log("ERROR >>>", err);
-       return;
-     }
-
-     console.log(data);
-   });
-
 });
 
 app.use(cors({credentials: true, origin: 'http://localhost:8080'}));
