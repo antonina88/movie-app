@@ -54,7 +54,7 @@ function signoutSuccess(state, action) {
   return {
         username: null,
         isLoggedIn: false,
-        error: action.data
+        error: action.message
       }
 }
 
@@ -62,6 +62,6 @@ function getAuthorizedUser(state, action) {
   return {
         username: action.data.username,
         isLoggedIn: false,
-        error: action.data
+        error: action.message
       }
 }
