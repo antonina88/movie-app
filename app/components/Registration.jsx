@@ -15,6 +15,5 @@ export default function Registration({ handleLoginChange, handlePasswordChange, 
 				<button className="SignUp active" onClick={handleSignUp}>Sign up</button>
 			</div>
 		</form>
-
 	);
 }

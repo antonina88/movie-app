@@ -28,7 +28,7 @@ class AddMovie extends Component {
 	updateUrl(event) {
 		this.setState({url: event.target.value});
 		const previewBlock = document.querySelector('.cover-preview');
-		previewBlock.style = `background: url(${event.target.value}) top center/cover no-repeat`;
+		previewBlock.style = `background: url(${event.target.value}) top center/250px auto no-repeat`;
 	}
 	updateTitle(event) {
 		this.setState({title: event.target.value});

@@ -54,14 +54,19 @@ function signoutSuccess(state, action) {
   return {
         username: null,
         isLoggedIn: false,
-        error: action.data
+        error: action.message
       }
 }
 
 function getAuthorizedUser(state, action) {
   return {
         username: action.data.username,
+<<<<<<< HEAD
         isLoggedIn: true,
         error: null
+=======
+        isLoggedIn: false,
+        error: action.message
+>>>>>>> 778ff315979baf4e504cde9aa9be4642e262fb1b
       }
 }

@@ -23,9 +23,7 @@ class LoginPage extends Component {
 		this.selectAuthorizationForm = this.selectAuthorizationForm.bind(this);
 		this.selectRegistrationForm = this.selectRegistrationForm.bind(this);
 	}
-	componentDidMount() {
-		this.props.getUser();
-	}
+
 	componentWillReceiveProps(nextProps) {
 		if (nextProps.username) {
 			 this.setState({ isLogined: true });
@@ -64,7 +62,6 @@ class LoginPage extends Component {
 
 	render() {
 		const { formtype, isLogined } = this.state; 
-		const { username } = this.props;
 
 		const shouldRedirect = isLogined ? <Redirect to="/" /> : false;
 
@@ -96,7 +93,8 @@ class LoginPage extends Component {
 
 		return (
 			<div className="app-container">
-				<div className="border-left"></div>{shouldRedirect}
+				{shouldRedirect}
+				<div className="border-left"></div>
 					<div className="wrapper">
 						<header>
 							<h1>Welcome to the moooviez</h1>
@@ -123,7 +121,6 @@ const mapDispatchToProps = dispatch => {
   return {
     addUser: (login, password) => dispatch(fetchNewUser(login, password)),
     authenticate: (login, password) => dispatch(fetchAuth(login, password)),
-    getUser: () => dispatch(fetchAuthorizedUser())
   };
 };
 
