@@ -1,6 +1,7 @@
 const { Schema } = require("mongoose");
 
 const movie = new Schema({
+  _id: Schema.Types.ObjectId,
   title: {
     type: String,
     required: true
@@ -13,7 +14,9 @@ const movie = new Schema({
     type: String,
     required: true
   },
-  date : { type: Date }
+  date : { type: Date },
+  likes: [{ type: Schema.Types.ObjectId, ref: 'Like' }],
+  comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }]
 });
 
 module.exports = movie;

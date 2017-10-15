@@ -66,11 +66,13 @@ const mapStateToProps = state => {
 		username: state.user.username
 	};
 };
-const mapDispatchToProps = dispatch => {
-	return {
-		signout: () => dispatch(fetchSignout()),
-		getUser: () => dispatch(fetchAuthorizedUser())
-	};
-};
+const mapDispatchToProps = dispatch => ({
+	signout() {
+	  dispatch(fetchSignout());
+	},
+	getUser() {
+	  dispatch(fetchAuthorizedUser());
+	}
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

@@ -33,19 +33,21 @@ export const getMovies = () => dispatch => {
     });
 };
 
-export const fetchMovieById = (id) => {
+export const fetchMovieById = id => {
   return (dispatch) => {
-    getMovieById(id).then(data => {
-      dispatch({ type: GET_MOVIE_BY_ID_SUCCESS, data })
-    })
-    .catch(e => {
-        const error = e.message;
-        dispatch({ type: GET_MOVIES_FAILURE, error })
-    });
+    getMovieById(id)
+      .then(data => {
+        console.log('data', data);
+        dispatch({ type: GET_MOVIE_BY_ID_SUCCESS, data })
+      })
+      .catch(e => {
+          const error = e.message;
+          dispatch({ type: GET_MOVIES_FAILURE, error })
+      });
   };
 };
 
-export const searchMovieByTitle = (title) => {
+export const searchMovieByTitle = title => {
   return (dispatch) => {
     getMovieByTitle(title).then(data => {
       dispatch({ type: MOVIE_BY_TITLE_SUCCESS, data })

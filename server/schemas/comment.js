@@ -9,9 +9,9 @@ const comment = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Movie"
   },
- userId: {
-    type: Schema.Types.ObjectId,
-    ref: "User"
+  userId: {
+    type: String,
+    required: true
   },
   date: { type: Date }
 });

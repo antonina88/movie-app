@@ -112,7 +112,9 @@ const mapStateToProps = state => {
 	};
 };
 const mapDispatchToProps = dispatch => ({
-	addMovie: (title, description, url) =>  dispatch(fetchAddMovie(title, description, url))
+	addMovie(title, description, url) {
+	   dispatch(fetchAddMovie(title, description, url));
+	}
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddMovie);

@@ -61,7 +61,7 @@ function signoutSuccess(state, action) {
 function getAuthorizedUser(state, action) {
   return {
         username: action.data.username,
-        isLoggedIn: false,
-        error: action.data
+        isLoggedIn: true,
+        error: null
       }
 }

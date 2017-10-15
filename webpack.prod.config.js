@@ -40,21 +40,6 @@ module.exports = {
             {
                 test: /\.(js|jsx)$/,
                 exclude: /(node_modules|bower_components)/,
-                enforce: 'pre',
-                use: [
-                    {
-                        loader: 'eslint-loader',
-                        options: {
-                            configFile: '.eslintrc',
-                            failOnWarning: false,
-                            failOnError: true
-                        }
-                    }
-                ],
-            },
-            {
-                test: /\.(js|jsx)$/,
-                exclude: /(node_modules|bower_components)/,
                 use: [
                     {
                         loader: 'babel-loader',

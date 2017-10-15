@@ -9,8 +9,7 @@
     "server": "node server/index.js",
     "app": "node webpack.dev.server.js",
     "start": "start npm run server & start npm run app",
-    "build": "rimraf dist && node_modules/.bin/webpack --config ./webpack.prod.config.js --progress --profile --colors",
-    "lint": "./node_modules/.bin/eslint ./app/*.js"
+    "build": "rimraf dist && node_modules/.bin/webpack --config ./webpack.prod.config.js --progress --profile --colors"
   },
   "keywords": [
     "movie-app",
